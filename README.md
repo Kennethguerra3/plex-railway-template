@@ -10,60 +10,15 @@ Servidor multimedia completo con soporte para Google Drive ilimitado. Despliega 
 
 1. Haz clic en el botón "Deploy on Railway" arriba
 2. Obtén tu `PLEX_CLAIM` desde [plex.tv/claim](https://plex.tv/claim)
-3. Configura las variables de entorno
-4. Espera a que termine el deploy
-5. Configura TCP Proxy en Settings → Networking
-6. Agrega `ADVERTISE_IP` con la URL del TCP Proxy
-7. ¡Listo! Accede desde [app.plex.tv](https://app.plex.tv)
+3. Espera a que termine el deploy
+4. Configura TCP Proxy Port `32400` en Settings → Networking
+5. ¡Listo! Accede desde [app.plex.tv](https://app.plex.tv)
 
 ---
 
-## 📋 Requisitos Previos
+## � Configuración de Google Drive (Opcional)
 
-1. **Cuenta de Plex**: [plex.tv](https://plex.tv)
-2. **Claim Token**: [plex.tv/claim](https://plex.tv/claim) (válido 4 minutos)
-3. **Cuenta de Railway**: [railway.app](https://railway.app)
-
----
-
-## ⚙️ Variables de Entorno
-
-### Variables Principales
-
-| Variable | Descripción | Ejemplo | Requerido |
-|----------|-------------|---------|-----------|
-| `PLEX_CLAIM` | Token de reclamación | `claim-xxxxxxxxxxxx` | ✅ |
-| `TZ` | Zona horaria | `America/Mexico_City` | ❌ |
-| `ADVERTISE_IP` | URL TCP Proxy de Railway (configurar después del deploy) | `tcp://monorail.proxy.rlwy.net:12345` | ⚠️ Post-deploy |
-
-### Variables de Google Drive (Service Account)
-
-| Variable | Descripción | Default |
-|----------|-------------|---------|
-| `ENABLE_RCLONE` | Habilitar montaje de Google Drive | `false` |
-| `RCLONE_SERVICE_ACCOUNT_JSON` | JSON completo de Service Account | - |
-| `RCLONE_REMOTE_NAME` | Nombre del remote | `gdrive` |
-| `RCLONE_REMOTE_PATH` | Ruta en Google Drive | `/` |
-
----
-
-## 💾 Volúmenes Persistentes
-
-Railway monta automáticamente:
-
-| Volumen | Ruta | Propósito |
-|---------|------|-----------|
-| `plex-config` | `/config` | Base de datos y configuración |
-| `plex-data` | `/data` | Archivos multimedia |
-| `plex-transcode` | `/transcode` | Archivos temporales |
-
-> ⚠️ **IMPORTANTE**: No elimines el volumen `/config` o perderás toda tu configuración.
-
----
-
-## 📁 Configuración de Google Drive (Service Account)
-
-### ⭐ Método Recomendado: 5 minutos
+### ⭐ Método Recomendado: Service Account (5 minutos)
 
 ✅ Sin instalar nada en tu PC  
 ✅ Solo copiar/pegar un archivo JSON  
@@ -121,7 +76,6 @@ plex-gdrive@tu-proyecto-123456.iam.gserviceaccount.com
 |----------|-------|
 | `ENABLE_RCLONE` | `true` |
 | `RCLONE_SERVICE_ACCOUNT_JSON` | *Pegar el JSON completo* |
-| `RCLONE_REMOTE_NAME` | `gdrive` |
 | `RCLONE_REMOTE_PATH` | `/Plex` |
 
 ### Paso 7: Subir Películas
@@ -143,7 +97,7 @@ Google Drive/Plex/
 
 ### Paso 8: Configurar Bibliotecas en Plex
 
-1. Accede a `https://tu-app.railway.app:32400/web`
+1. Accede desde [app.plex.tv](https://app.plex.tv)
 2. Clic en "+" junto a "Bibliotecas"
 3. Selecciona tipo: "Películas"
 4. Navega a: `/mnt/gdrive/Plex/Movies`
@@ -164,41 +118,17 @@ Revisa los logs en Railway:
 
 ## 🔧 Configuración Post-Despliegue
 
-### 1. Exponer Puerto con TCP Proxy
-
-Después del deploy, Railway NO genera una URL automáticamente. Debes configurar el networking:
+### 1. Configurar TCP Proxy
 
 1. Ve a tu servicio en Railway Dashboard
 2. Pestaña **"Settings"** → **"Networking"**
-3. Clic en **"Add TCP Proxy"**
-4. Puerto: `32400`
-5. Railway generará una URL tipo:
+3. En **"Public Networking"**, ingresa puerto: `32400`
+4. Railway generará automáticamente una URL de acceso
 
-   ```
-   tcp://monorail.proxy.rlwy.net:12345
-   ```
+### 2. Acceder a Plex
 
-### 2. Configurar ADVERTISE_IP
-
-Copia la URL del TCP Proxy y agrégala como variable de entorno:
-
-1. Pestaña **"Variables"**
-2. Agrega nueva variable:
-
-   ```
-   ADVERTISE_IP=tcp://monorail.proxy.rlwy.net:12345
-   ```
-
-3. El servicio se reiniciará automáticamente
-
-### 3. Acceder a Plex
-
-Usa la URL del TCP Proxy para acceder:
-```
-tcp://monorail.proxy.rlwy.net:12345/web
-```
-
-O accede directamente desde [app.plex.tv](https://app.plex.tv) - Plex detectará tu servidor automáticamente.
+- **Recomendado**: [app.plex.tv](https://app.plex.tv) - Plex detectará tu servidor automáticamente
+- **Alternativa**: Usa la URL del TCP Proxy que Railway generó
 
 ---
 
@@ -206,12 +136,12 @@ O accede directamente desde [app.plex.tv](https://app.plex.tv) - Plex detectará
 
 ### El servidor no es accesible
 
-- ✅ Verifica `ADVERTISE_IP` con el puerto `:32400`
+- ✅ Verifica que configuraste TCP Proxy Port `32400`
 - ✅ Revisa los logs en Railway Dashboard
 
 ### El servidor se reinicia constantemente
 
-- ✅ Verifica que `PLEX_CLAIM` no esté expirado
+- ✅ Verifica que `PLEX_CLAIM` no esté expirado (válido 4 minutos)
 - ✅ Revisa los logs para errores
 
 ### Google Drive: "Cannot read files"
@@ -228,25 +158,12 @@ O accede directamente desde [app.plex.tv](https://app.plex.tv) - Plex detectará
 
 ---
 
-## � Comparación de Métodos
-
-| Característica | Service Account | OAuth |
-|----------------|-----------------|-------|
-| Instalación en PC | ❌ No requiere | ✅ Requiere Rclone |
-| Complejidad | ⭐ Muy fácil | ⭐⭐⭐ Media |
-| Tiempo setup | ~5 minutos | ~15 minutos |
-| Expiración | ♾️ Nunca | ⚠️ Puede expirar |
-| Recomendado | ✅ Todos | Usuarios avanzados |
-
----
-
 ## 📚 Recursos
 
 - [Documentación Oficial de Plex](https://support.plex.tv/)
 - [Repositorio Original](https://github.com/plexinc/pms-docker)
 - [Documentación de Railway](https://docs.railway.app/)
 - [Guía Service Account Detallada](SERVICE_ACCOUNT_SETUP.md)
-- [Guía OAuth Avanzada](GOOGLE_DRIVE_SETUP.md)
 
 ---
 

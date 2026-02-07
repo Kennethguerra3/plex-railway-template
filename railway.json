@@ -17,11 +17,6 @@
       "required": true,
       "type": "string"
     },
-    "ADVERTISE_IP": {
-      "description": "URL del TCP Proxy de Railway (ej: tcp://monorail.proxy.rlwy.net:12345). Configurar DESPUÉS del deploy en Settings → Networking → Add TCP Proxy (puerto 32400).",
-      "required": false,
-      "type": "string"
-    },
     "TZ": {
       "description": "Zona horaria para el servidor (ej: America/New_York, Europe/Madrid, UTC).",
       "default": "UTC",
