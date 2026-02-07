@@ -1,0 +1,55 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "startCommand": "/init",
+    "healthcheckPath": "/identity",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "params": {
+    "PLEX_CLAIM": {
+      "description": "Token de reclamación obtenido desde https://plex.tv/claim (válido por 4 minutos). Necesario para vincular el servidor a tu cuenta de Plex.",
+      "required": true,
+      "type": "string"
+    },
+    "ADVERTISE_IP": {
+      "description": "URL pública del servicio en Railway (ej: https://plex-production.up.railway.app:32400). Necesario para que el servidor sea accesible externamente en modo Bridge.",
+      "required": false,
+      "type": "string"
+    },
+    "TZ": {
+      "description": "Zona horaria para el servidor (ej: America/New_York, Europe/Madrid, UTC).",
+      "default": "UTC",
+      "required": false,
+      "type": "string"
+    },
+    "PLEX_UID": {
+      "description": "User ID para el proceso de Plex. Útil para permisos de archivos.",
+      "default": "1000",
+      "required": false,
+      "type": "string"
+    },
+    "PLEX_GID": {
+      "description": "Group ID para el proceso de Plex. Útil para permisos de archivos.",
+      "default": "1000",
+      "required": false,
+      "type": "string"
+    },
+    "CHANGE_CONFIG_DIR_OWNERSHIP": {
+      "description": "Cambiar la propiedad del directorio /config al iniciar (true/false).",
+      "default": "true",
+      "required": false,
+      "type": "string"
+    },
+    "ALLOWED_NETWORKS": {
+      "description": "Redes permitidas para acceso sin autenticación (ej: 192.168.1.0/24). Dejar vacío para requerir autenticación siempre.",
+      "required": false,
+      "type": "string"
+    }
+  }
+}
