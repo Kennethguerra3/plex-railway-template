@@ -63,6 +63,9 @@ ENV CHANGE_CONFIG_DIR_OWNERSHIP="true" \
 
 COPY root/ /
 
+# Set executable permissions for scripts
+RUN chmod +x /usr/local/bin/mount-gdrive.sh
+
 # Save version and install
 ARG PLEX_DISTRO=debian
 ARG TAG=beta
