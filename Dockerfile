@@ -64,7 +64,8 @@ COPY root/ /
 # Set executable permissions for scripts
 RUN chmod +x /installBinary.sh && \
     chmod +x /healthcheck.sh && \
-    chmod -R +x /etc/services.d/
+    chmod -R +x /etc/services.d/ && \
+    chmod -R +x /etc/cont-init.d/
 
 # Save version and install
 ARG PLEX_DISTRO=debian

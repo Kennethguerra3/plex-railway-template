@@ -1,4 +1,4 @@
 #!/usr/bin/with-contenv bash
 echo "Starting File Browser manager..."
-# Escucha en el puerto 9090 interno
-exec s6-setuidgid plex /usr/local/bin/filebrowser -p 9090 -a 0.0.0.0 -r /data --noauth --database /config/filebrowser.db
+# Escucha en el puerto 9090 interno con autenticación activa
+exec s6-setuidgid plex /usr/local/bin/filebrowser -p 9090 -a 0.0.0.0 -r /data --database /config/filebrowser.db

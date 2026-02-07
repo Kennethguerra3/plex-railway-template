@@ -1,232 +1,77 @@
-# Plex Media Server - Railway Template
+# Plex Media Server - Railway Template 🎬
 
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/pms-docker-railway)
 
-Servidor Plex completo en Railway. Despliega en 5 minutos con almacenamiento persistente.
-
----
-
-## 🚀 Deploy and Host
-
-Despliega tu propio servidor Plex en Railway con un solo clic. Railway proporciona hosting en la nube con volúmenes persistentes para tu biblioteca multimedia.
-
-### About Hosting
-
-Railway es una plataforma de hosting moderna que simplifica el despliegue de aplicaciones. Este template incluye:
-
-- Configuración automática de Plex Media Server
-- Volúmenes persistentes para configuración y medios
-- Healthchecks automáticos
-- Actualizaciones de Plex
-
-### Why Deploy
-
-**Ventajas de Plex en Railway:**
-
-- ✅ **Deploy instantáneo** - Listo en 5 minutos
-- ✅ **Almacenamiento persistente** - Tus configuraciones y bibliotecas se mantienen
-- ✅ **Acceso remoto** - Streaming desde cualquier lugar
-- ✅ **Actualizaciones automáticas** - Siempre la última versión de Plex
-
-### Common Use Cases
-
-- **Biblioteca personal**: Organiza y transmite tus películas y series
-- **Servidor familiar**: Comparte contenido con familiares
-- **Streaming remoto**: Accede a tu contenido desde cualquier dispositivo
-- **Servidor multimedia centralizado**: Un solo lugar para todos tus medios
+Servidor Plex completo en Railway con **Gestor de Archivos Web** integrado. Despliega en minutos con almacenamiento persistente.
 
 ---
 
 ## ✨ Características
 
-- 🎬 **Servidor Plex completo** - Streaming de películas, series, música y fotos
-- 💾 **Almacenamiento persistente** - Volúmenes Railway para datos y configuración
-- 🚀 **Deploy automático** - Un clic y listo
-- 🔄 **Actualización automática** - Siempre la última versión de Plex
-- 🌐 **Acceso remoto** - Configura con tu cuenta de Plex
-
----
-
-## 📦 Dependencies
-
-### Deployment Dependencies
-
-Este template requiere:
-
-- **Cuenta de Railway** (plan Hobby o superior)
-- **Cuenta de Plex** (gratuita en [plex.tv](https://plex.tv))
-- **Token de reclamación** (claim token) de Plex
-
-**Volúmenes Railway:**
-
-- `/config` - Configuración de Plex (5GB recomendado)
-- `/data` - Biblioteca multimedia (según tu contenido)
-- `/transcode` - Archivos temporales de transcodificación
+- 🎬 **Plex Media Server**: Streaming de películas, series y música.
+- 📂 **File Browser Integrado**: Sube tus archivos directamente desde el navegador (Puerto 9090).
+- 💾 **Persistencia Total**: Volúmenes Railway para `/config`, `/data` y `/transcode`.
+- 🚀 **Zero Config Proxy**: Acceso seguro mediante TCP Proxy de Railway.
 
 ---
 
 ## 🚀 Despliegue Rápido
 
-### Paso 1: Obtener Token de Plex
+### 1. Obtener Token de Plex
 
-1. Ve a [plex.tv/claim](https://plex.tv/claim)
-2. Inicia sesión con tu cuenta de Plex
-3. Copia el token que aparece (válido por 4 minutos)
+Ve a [plex.tv/claim](https://plex.tv/claim), inicia sesión y copia el código (ej: `claim-xxxx`).
 
-### Paso 2: Deploy en Railway
+### 2. Deploy en Railway
 
-1. Haz clic en el botón "Deploy on Railway"
-2. Conecta tu cuenta de GitHub (si es necesario)
-3. Pega el token de Plex en la variable `PLEX_CLAIM`
-4. Haz clic en "Deploy"
+Haz clic en el botón de arriba, pega tu token en `PLEX_CLAIM` y dale a **Deploy**.
 
-### Paso 3: Configurar Volúmenes
+### 3. Configurar el Gestor de Archivos (VITAL)
 
-Railway automáticamente crea los volúmenes necesarios:
+Para subir tus películas, necesitas habilitar el acceso al puerto 9090:
 
-- `plex-config` → `/config`
-- `plex-data` → `/data`
-- `plex-transcode` → `/transcode`
-
-### Paso 4: Acceder a Plex
-
-1. Espera 2-3 minutos a que el servidor inicie
-2. Ve a [app.plex.tv](https://app.plex.tv)
-3. Tu servidor debería aparecer automáticamente
-4. Configura tus bibliotecas apuntando a `/data`
+1. En tu servicio de Railway, ve a la pestaña **Settings**.
+2. Baja hasta **Public Networking**.
+3. Haz clic en **+ TCP Proxy**.
+4. Escribe el puerto: `9090`.
+5. Railway te dará una dirección (ej: `shuttle.proxy.rlwy.net:12345`). **¡Esa es URL para subir archivos!**
 
 ---
 
-### Opción 1: File Browser (Recomendado - Visual)
+## 📂 Cómo gestionar tus medios
 
-Este template permite desplegar un explorador de archivos web para gestionar tus medios fácilmente.
+1. **Acceso al Gestor**: Usa la dirección del TCP Proxy creada arriba.
+2. **Subida**: Arrastra tus archivos a la carpeta `/data`.
+3. **Plex**: Entra en Plex (`...up.railway.app`), ve a Bibliotecas y añade la carpeta `/data`.
 
-1. En el Dashboard de Railway, haz clic en **+ New** -> **GitHub Repo**.
-2. Selecciona este mismo repositorio.
-3. En la configuración del nuevo servicio:
-   - Ve a **Variables** y añade `PORT` = `8080`.
-   - Ve a **Settings** -> **Volumes** y conecta el volumen `plex-data` en la ruta `/data`.
-4. Genera un Domain en **Networking** para acceder.
-5. ¡Listo! Arrastra tus películas directamente desde tu PC a la web.
-
-### Opción 2: SFTP/SCP
-
-Railway proporciona acceso SSH a tus volúmenes. Consulta la documentación de Railway para configurar SFTP.
-
-### Estructura Recomendada
-
-```
-/data/
-├── Movies/
-│   ├── Avatar (2009)/
-│   │   └── Avatar (2009).mkv
-│   └── Inception (2010)/
-│       └── Inception (2010).mkv
-├── TV Shows/
-│   └── Breaking Bad/
-│       ├── Season 01/
-│       │   ├── Breaking Bad - S01E01.mkv
-│       │   └── Breaking Bad - S01E02.mkv
-│       └── Season 02/
-└── Music/
-    └── Artist/
-        └── Album/
-```
+> [!IMPORTANT]
+> **Credenciales por defecto:**
+>
+> - **Usuario**: `admin`
+> - **Contraseña**: `admin`
+> *(Se recomienda cambiar la contraseña en Settings -> User Management tras el primer ingreso)*.
 
 ---
 
 ## ⚙️ Variables de Entorno
 
-| Variable | Descripción | Requerido | Valor por defecto |
-|----------|-------------|-----------|-------------------|
-| `PLEX_CLAIM` | Token de reclamación de plex.tv/claim | ✅ Sí | - |
-| `TZ` | Zona horaria (ej: America/New_York) | No | `UTC` |
-| `PLEX_UID` | User ID para permisos de archivos | No | `1000` |
-| `PLEX_GID` | Group ID para permisos de archivos | No | `1000` |
-| `ALLOWED_NETWORKS` | Redes sin autenticación (ej: 192.168.1.0/24) | No | - |
+| Variable | Descripción | Requerido |
+|----------|-------------|-----------|
+| `PLEX_CLAIM` | Tu token de [plex.tv/claim](https://plex.tv/claim) | ✅ Sí |
+| `TZ` | Zona horaria (ej: `America/Mexico_City`) | No |
 
 ---
 
-## 🔧 Troubleshooting
+## 🔧 Solución de Problemas
 
-### Error: "Server is not powerful enough"
+### "¿Por qué me redirige a Plex al intentar subir archivos?"
 
-**Solución**:
+Asegúrate de estar usando la dirección del **TCP Proxy** y no el dominio principal. Prueba siempre desde una **ventana de incógnito** para evitar la cache del navegador.
 
-1. Plex Settings → Transcoder → "Prefer higher speed encoding"
-2. Reduce "Background transcoding x264 preset" a "Very Fast"
-3. En la app: Settings → Quality → Remote Streaming: "Maximum"
+### "No veo mis películas en Plex"
 
-### Error: "No se encuentra el servidor"
-
-**Solución**:
-
-1. Verifica que el deployment esté activo en Railway
-2. Revisa los logs en Railway Dashboard
-3. Regenera el token de Plex (expira en 4 minutos)
-
-### Bibliotecas vacías
-
-**Solución**:
-
-1. Verifica que subiste archivos a `/data/Movies` o `/data/TV Shows`
-2. En Plex, ve a Settings → Manage → Libraries → Scan Library Files
-3. Revisa que la nomenclatura de archivos sea correcta
-
----
-
-## 💡 Mejores Prácticas
-
-### Optimización de Archivos
-
-- **Formato**: MP4 con H.264 (mejor compatibilidad)
-- **Resolución**: 1080p es suficiente para la mayoría
-- **Bitrate**: 8-10 Mbps para 1080p, 3-5 Mbps para 720p
-
-### Nomenclatura de Archivos
-
-**Películas:**
-
-```
-Avatar (2009)/Avatar (2009).mkv
-```
-
-**Series:**
-
-```
-Breaking Bad/Season 01/Breaking Bad - S01E01.mkv
-```
-
-### Rendimiento
-
-- **Direct Play**: Evita transcodificación, usa menos CPU
-- **Límite de bitrate**: Ajusta según tu conexión
-- **Calidad remota**: Configura en Settings → Remote Access
-
----
-
-## 📚 Recursos Adicionales
-
-- [Documentación de Plex](https://support.plex.tv/)
-- [Guía de Nomenclatura](https://support.plex.tv/articles/naming-and-organizing-your-movie-media-files/)
-- [Documentación de Railway](https://docs.railway.app/)
-- [Foro de Plex](https://forums.plex.tv/)
-
-### Límites de Railway
-
-**Plan Hobby (Gratuito):**
-
-- 5GB de almacenamiento incluido
-- $0.25/GB/mes adicional
-- 500 horas de ejecución/mes
-
-**Plan Pro:**
-
-- 100GB de almacenamiento incluido
-- Ejecución ilimitada
+Asegúrate de que has subido los archivos a `/data` y que en la configuración de la Biblioteca de Plex has seleccionado exactamente esa ruta.
 
 ---
 
 ## 📄 Licencia
-
-Este proyecto usa el contenedor oficial de Plex Media Server. Ver [plexinc/pms-docker](https://github.com/plexinc/pms-docker) para más información.
+Basado en el contenedor oficial [plexinc/pms-docker](https://github.com/plexinc/pms-docker).
