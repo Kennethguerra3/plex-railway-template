@@ -1,6 +1,6 @@
 # Plex Media Server - Railway Template
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://github.com/Kennethguerra3/plex-railway-template)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/pms-docker-railway)
 
 Servidor Plex completo en Railway. Despliega en 5 minutos con almacenamiento persistente.
 

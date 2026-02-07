@@ -1,0 +1,15 @@
+{
+    "admin": "off"
+}
+
+:{$PORT} {
+    # File Browser en /manage
+    handle_path /manage* {
+        reverse_proxy localhost:8080
+    }
+
+    # Todo lo demás a Plex
+    handle /* {
+        reverse_proxy localhost:32400
+    }
+}
