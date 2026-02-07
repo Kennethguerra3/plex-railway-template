@@ -7,11 +7,7 @@ startCommand = "/init"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
-# Configuración de red - Exponer el puerto principal de Plex
-[[deploy.serviceMesh]]
-name = "plex-web"
-port = 32400
-protocol = "TCP"
+# Configuración de red - Railway gestionará el tráfico vía Caddy usando el puerto $PORT automático.
 
 # Volúmenes persistentes críticos
 [[deploy.volumes]]
