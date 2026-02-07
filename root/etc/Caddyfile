@@ -1,15 +1,11 @@
-{
-    admin off
-}
-
 :{$PORT} {
-    # File Browser en /manage (Mantenemos el prefijo porque File Browser lo gestiona internamente)
+    # El explorador de archivos tiene prioridad absoluta
     handle /manage* {
-        reverse_proxy localhost:8080
+        reverse_proxy 127.0.0.1:8080
     }
 
-    # Todo lo demás a Plex
+    # Todo lo demás va a Plex
     handle /* {
-        reverse_proxy localhost:32400
+        reverse_proxy 127.0.0.1:32400
     }
 }
