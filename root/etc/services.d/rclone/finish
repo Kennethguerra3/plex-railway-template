@@ -1,7 +1,0 @@
-#!/usr/bin/execlineb -S0
-
-# S6 finish script for Rclone service
-# This runs when the Rclone service stops
-
-foreground { echo "[s6-finish] Rclone service stopped" }
-foreground { fusermount -u /mnt/gdrive }
