@@ -52,13 +52,18 @@
       "type": "string"
     },
     "ENABLE_RCLONE": {
-      "description": "Habilitar montaje de Google Drive con Rclone (true/false). Dejar en 'false' hasta que configures RCLONE_CONFIG.",
+      "description": "Habilitar montaje de Google Drive con Rclone (true/false). Dejar en 'false' hasta que configures Service Account o OAuth.",
       "default": "false",
       "required": false,
       "type": "string"
     },
+    "RCLONE_SERVICE_ACCOUNT_JSON": {
+      "description": "[RECOMENDADO] JSON completo de Service Account de Google. Método más simple, sin instalar nada en tu PC. Ver SERVICE_ACCOUNT_SETUP.md para guía paso a paso.",
+      "required": false,
+      "type": "string"
+    },
     "RCLONE_CONFIG": {
-      "description": "Configuración de Rclone en formato base64. Obtén esto ejecutando localmente: 'rclone config file' para ver la ubicación, luego 'base64 -w 0 rclone.conf' (Linux/Mac) o 'certutil -encode rclone.conf rclone.txt' (Windows). Ver GOOGLE_DRIVE_SETUP.md para instrucciones completas.",
+      "description": "[AVANZADO] Configuración OAuth de Rclone en base64. Solo si no usas Service Account. Requiere instalar Rclone en tu PC. Ver GOOGLE_DRIVE_SETUP.md.",
       "required": false,
       "type": "string"
     },

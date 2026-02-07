@@ -101,26 +101,55 @@ https://<nombre-servicio>.up.railway.app:32400/web
 
 ## 📁 Almacenamiento de Archivos Multimedia
 
-### ⭐ Opción Recomendada: Google Drive + Rclone (Integrado)
+### ⭐ Opción Recomendada: Google Drive con Service Account (Súper Fácil)
 
-Esta template incluye **integración completa con Google Drive** usando Rclone:
+Esta template incluye **dos métodos** para conectar Google Drive. El método de Service Account es el más simple:
 
+#### 🎯 Método 1: Service Account (Recomendado)
+
+✅ **Sin instalar nada en tu PC**  
+✅ **Solo copiar/pegar un archivo JSON**  
+✅ **Nunca expira**  
+✅ **5 minutos de configuración**  
 ✅ **Almacenamiento ilimitado** (según tu plan de Google)  
-✅ **Persistencia total** de tus películas  
 ✅ **Fácil gestión** desde Google Drive web/desktop  
-✅ **Sin costos adicionales** en Railway  
 
-**📖 Guía completa**: Ver [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md)
+**📖 Guía paso a paso**: [SERVICE_ACCOUNT_SETUP.md](SERVICE_ACCOUNT_SETUP.md)
 
 **Pasos rápidos:**
 
-1. Configura Rclone localmente con Google Drive
-2. Obtén la configuración en base64
-3. Agrega variables de entorno en Railway:
+1. Crear Service Account en Google Cloud Console
+2. Descargar archivo JSON
+3. Compartir carpeta de Google Drive con email de Service Account
+4. Copiar JSON completo a Railway:
+   - `ENABLE_RCLONE=true`
+   - `RCLONE_SERVICE_ACCOUNT_JSON=<contenido-del-json>`
+5. Subir películas a Google Drive
+6. Agregar bibliotecas en Plex apuntando a `/mnt/gdrive`
+
+---
+
+#### 🔧 Método 2: OAuth Personal (Avanzado)
+
+Para usuarios técnicos que prefieren OAuth:
+
+⚠️ **Requiere instalar Rclone en tu PC**  
+⚠️ **Configuración más compleja (15 minutos)**  
+⚠️ **Requiere terminal/línea de comandos**  
+
+**📖 Guía completa**: [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md)
+
+**Pasos:**
+
+1. Instalar Rclone localmente
+2. Configurar remote de Google Drive
+3. Obtener configuración en base64
+4. Agregar variables en Railway:
    - `ENABLE_RCLONE=true`
    - `RCLONE_CONFIG=<tu-config-base64>`
-4. Sube películas a Google Drive
-5. Agrega bibliotecas en Plex apuntando a `/mnt/gdrive`
+5. Subir películas y configurar Plex
+
+---
 
 ### Otras Opciones
 

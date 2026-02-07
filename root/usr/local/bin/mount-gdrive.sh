@@ -9,26 +9,69 @@ if [ "${ENABLE_RCLONE}" != "true" ]; then
     exit 0
 fi
 
-# Check if RCLONE_CONFIG is set
-if [ -z "${RCLONE_CONFIG}" ]; then
-    echo "[Rclone] ERROR: RCLONE_CONFIG environment variable is not set."
-    echo "[Rclone] Please configure Rclone and set RCLONE_CONFIG in Railway."
-    exit 1
-fi
-
-# Decode and write Rclone config
-echo "[Rclone] Decoding Rclone configuration..."
+# Create config directory
 mkdir -p /config/rclone
-echo "${RCLONE_CONFIG}" | base64 -d > /config/rclone/rclone.conf
-
-if [ ! -s /config/rclone/rclone.conf ]; then
-    echo "[Rclone] ERROR: Failed to decode RCLONE_CONFIG. Please check the base64 encoding."
-    exit 1
-fi
 
 # Set default values
 RCLONE_REMOTE_NAME="${RCLONE_REMOTE_NAME:-gdrive}"
 RCLONE_REMOTE_PATH="${RCLONE_REMOTE_PATH:-/}"
+
+# Detect authentication method
+if [ -n "${RCLONE_SERVICE_ACCOUNT_JSON}" ]; then
+    # Method 1: Service Account (Recommended - Simple)
+    echo "[Rclone] Using Service Account authentication (recommended)"
+    
+    # Validate JSON
+    if ! echo "${RCLONE_SERVICE_ACCOUNT_JSON}" | jq empty 2>/dev/null; then
+        echo "[Rclone] ERROR: RCLONE_SERVICE_ACCOUNT_JSON is not valid JSON."
+        echo "[Rclone] Please check the JSON file content."
+        exit 1
+    fi
+    
+    # Save Service Account JSON
+    echo "${RCLONE_SERVICE_ACCOUNT_JSON}" > /config/rclone/service-account.json
+    
+    # Generate Rclone config automatically
+    cat > /config/rclone/rclone.conf <<EOF
+[${RCLONE_REMOTE_NAME}]
+type = drive
+scope = drive
+service_account_file = /config/rclone/service-account.json
+team_drive = 
+EOF
+    
+    echo "[Rclone] ✓ Service Account configuration created"
+    
+elif [ -n "${RCLONE_CONFIG}" ]; then
+    # Method 2: OAuth Personal (Advanced - Requires Rclone on PC)
+    echo "[Rclone] Using OAuth personal authentication (advanced)"
+    
+    # Decode and write Rclone config
+    echo "[Rclone] Decoding Rclone configuration..."
+    echo "${RCLONE_CONFIG}" | base64 -d > /config/rclone/rclone.conf
+    
+    if [ ! -s /config/rclone/rclone.conf ]; then
+        echo "[Rclone] ERROR: Failed to decode RCLONE_CONFIG. Please check the base64 encoding."
+        exit 1
+    fi
+    
+    echo "[Rclone] ✓ OAuth configuration decoded"
+    
+else
+    # No authentication method provided
+    echo "[Rclone] ERROR: No authentication method configured."
+    echo "[Rclone] "
+    echo "[Rclone] Please set ONE of the following:"
+    echo "[Rclone] "
+    echo "[Rclone] Option 1 (RECOMMENDED - Simple):"
+    echo "[Rclone]   RCLONE_SERVICE_ACCOUNT_JSON = <your-service-account-json>"
+    echo "[Rclone]   See SERVICE_ACCOUNT_SETUP.md for step-by-step guide"
+    echo "[Rclone] "
+    echo "[Rclone] Option 2 (Advanced):"
+    echo "[Rclone]   RCLONE_CONFIG = <your-rclone-config-base64>"
+    echo "[Rclone]   See GOOGLE_DRIVE_SETUP.md for instructions"
+    exit 1
+fi
 
 echo "[Rclone] Configuration:"
 echo "  Remote Name: ${RCLONE_REMOTE_NAME}"
@@ -72,6 +115,19 @@ for i in {1..30}; do
     if mountpoint -q /mnt/gdrive; then
         echo "[Rclone] ✓ Google Drive mounted successfully at /mnt/gdrive"
         echo "[Rclone] You can now add libraries in Plex pointing to /mnt/gdrive"
+        
+        # Test read access
+        if ls /mnt/gdrive > /dev/null 2>&1; then
+            echo "[Rclone] ✓ Read access verified"
+        else
+            echo "[Rclone] WARNING: Mount successful but cannot read files"
+            echo "[Rclone] If using Service Account, make sure you shared the folder with:"
+            if [ -f /config/rclone/service-account.json ]; then
+                SERVICE_EMAIL=$(jq -r '.client_email' /config/rclone/service-account.json)
+                echo "[Rclone]   ${SERVICE_EMAIL}"
+            fi
+        fi
+        
         exit 0
     fi
     sleep 1

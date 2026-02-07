@@ -30,7 +30,8 @@ RUN \
   unrar \
   rclone \
   fuse3 \
-  ca-certificates && \
+  ca-certificates \
+  jq && \
     apt-get -y autoremove && \
     apt-get -y clean && \
   rm -rf /var/lib/apt/lists/* && \
