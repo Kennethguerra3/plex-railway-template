@@ -67,5 +67,3 @@ ARG PLEX_DISTRO=debian
 ARG TAG=beta
 ARG URL=
 RUN /installBinary.sh
-
-HEALTHCHECK --interval=5s --timeout=2s --retries=20 CMD /healthcheck.sh || exit 1
