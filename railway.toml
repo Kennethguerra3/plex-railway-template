@@ -7,7 +7,15 @@ startCommand = "/init"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
-# Configuración de red - Railway gestionará el tráfico vía Caddy usando el puerto $PORT automático.
+# Exponer Plex (Puerto 32400) - Este será el puerto por defecto de la URL pública
+[[deploy.serviceMesh]]
+name = "plex"
+port = 32400
+
+# Exponer Gestor de Archivos (Puerto 8085) - Solo accesible vía túnel o red interna
+[[deploy.serviceMesh]]
+name = "file-manager"
+port = 8085
 
 # Volúmenes persistentes críticos
 [[deploy.volumes]]
