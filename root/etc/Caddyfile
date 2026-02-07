@@ -3,8 +3,8 @@
 }
 
 :{$PORT} {
-    # File Browser en /manage
-    handle_path /manage* {
+    # File Browser en /manage (Mantenemos el prefijo porque File Browser lo gestiona internamente)
+    handle /manage* {
         reverse_proxy localhost:8080
     }
 
