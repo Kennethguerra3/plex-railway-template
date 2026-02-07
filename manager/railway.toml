@@ -1,0 +1,15 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "/init"
+restartPolicyType = "ON_FAILURE"
+
+[[deploy.volumes]]
+mountPath = "/config"
+name = "filebrowser-config"
+
+[[deploy.volumes]]
+mountPath = "/data"
+name = "plex-data"

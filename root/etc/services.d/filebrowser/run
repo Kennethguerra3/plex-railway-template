@@ -1,4 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-echo "Starting File Browser manager..."
-exec s6-setuidgid plex filebrowser -p 8085 -a 0.0.0.0 -r /data --noauth --database /config/filebrowser.db
