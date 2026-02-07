@@ -61,10 +61,13 @@ EXPOSE 32400/tcp 8324/tcp 32469/tcp 1900/udp 32410/udp 32412/udp 32413/udp 32414
 ENV CHANGE_CONFIG_DIR_OWNERSHIP="true" \
     HOME="/config"
 
+# Copy application files
 COPY root/ /
 
-# Set executable permissions for scripts
-RUN chmod +x /usr/local/bin/mount-gdrive.sh
+# CRITICAL: Set executable permissions for all scripts (Railway fix)
+RUN chmod +x /usr/local/bin/mount-gdrive.sh && \
+  chmod +x /installBinary.sh && \
+  chmod +x /healthcheck.sh
 
 # Save version and install
 ARG PLEX_DISTRO=debian
