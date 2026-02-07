@@ -97,23 +97,17 @@ Railway automáticamente crea los volúmenes necesarios:
 
 ---
 
-## 📁 Subir Contenido
+### Opción 1: File Browser (Recomendado - Visual)
 
-### Opción 1: Railway CLI (Recomendado)
+Este template permite desplegar un explorador de archivos web para gestionar tus medios fácilmente.
 
-```bash
-# Instalar Railway CLI
-npm install -g @railway/cli
-
-# Login
-railway login
-
-# Conectar al proyecto
-railway link
-
-# Subir archivos al volumen
-railway volume upload plex-data ./Movies /data/Movies
-```
+1. En el Dashboard de Railway, haz clic en **+ New** -> **GitHub Repo**.
+2. Selecciona este mismo repositorio.
+3. En la configuración del nuevo servicio:
+   - Ve a **Variables** y añade `PORT` = `8080`.
+   - Ve a **Settings** -> **Volumes** y conecta el volumen `plex-data` en la ruta `/data`.
+4. Genera un Domain en **Networking** para acceder.
+5. ¡Listo! Arrastra tus películas directamente desde tu PC a la web.
 
 ### Opción 2: SFTP/SCP
 

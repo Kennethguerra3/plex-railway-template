@@ -34,6 +34,9 @@ RUN \
     apt-get -y clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install FileBrowser
+RUN curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
+
 # Fetch and extract S6 overlay
 ARG S6_OVERLAY_VERSION=v2.2.0.3
 RUN if [ "${TARGETPLATFORM}" = 'linux/arm/v7' ]; then \
