@@ -50,6 +50,29 @@
       "description": "Redes permitidas para acceso sin autenticación (ej: 192.168.1.0/24). Dejar vacío para requerir autenticación siempre.",
       "required": false,
       "type": "string"
+    },
+    "ENABLE_RCLONE": {
+      "description": "Habilitar montaje de Google Drive con Rclone (true/false). Dejar en 'false' hasta que configures RCLONE_CONFIG.",
+      "default": "false",
+      "required": false,
+      "type": "string"
+    },
+    "RCLONE_CONFIG": {
+      "description": "Configuración de Rclone en formato base64. Obtén esto ejecutando localmente: 'rclone config file' para ver la ubicación, luego 'base64 -w 0 rclone.conf' (Linux/Mac) o 'certutil -encode rclone.conf rclone.txt' (Windows). Ver GOOGLE_DRIVE_SETUP.md para instrucciones completas.",
+      "required": false,
+      "type": "string"
+    },
+    "RCLONE_REMOTE_NAME": {
+      "description": "Nombre del remote de Rclone configurado en RCLONE_CONFIG (por defecto: gdrive).",
+      "default": "gdrive",
+      "required": false,
+      "type": "string"
+    },
+    "RCLONE_REMOTE_PATH": {
+      "description": "Ruta dentro de Google Drive donde están las películas (ej: /Plex/Movies). Usa '/' para la raíz de Google Drive.",
+      "default": "/",
+      "required": false,
+      "type": "string"
     }
   }
 }

@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# S6 service script for Rclone Google Drive mount
+# This runs before Plex starts to ensure Google Drive is mounted
+
+echo "[s6-init] Starting Rclone service..."
+
+# Execute the mount script
+exec /usr/local/bin/mount-gdrive.sh

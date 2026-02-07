@@ -27,10 +27,17 @@ RUN \
       curl \
       xmlstarlet \
       uuid-runtime \
-      unrar && \
+  unrar \
+  rclone \
+  fuse3 \
+  ca-certificates && \
     apt-get -y autoremove && \
     apt-get -y clean && \
-    rm -rf /var/lib/apt/lists/*
+  rm -rf /var/lib/apt/lists/* && \
+  \
+  # Create mount point for Google Drive
+  mkdir -p /mnt/gdrive && \
+  chown plex:plex /mnt/gdrive
 
 # Fetch and extract S6 overlay
 ARG S6_OVERLAY_VERSION=v2.2.0.3

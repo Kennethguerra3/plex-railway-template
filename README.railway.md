@@ -99,22 +99,43 @@ https://<nombre-servicio>.up.railway.app:32400/web
 
 ---
 
-## 📁 Subir Archivos Multimedia
+## 📁 Almacenamiento de Archivos Multimedia
 
-Railway no proporciona acceso directo al sistema de archivos. Tienes varias opciones:
+### ⭐ Opción Recomendada: Google Drive + Rclone (Integrado)
 
-### Opción 1: Usar un Servicio de Almacenamiento Externo
-- Monta un bucket de S3, Google Cloud Storage, o similar
-- Configura Plex para leer desde ese volumen
+Esta template incluye **integración completa con Google Drive** usando Rclone:
 
-### Opción 2: Usar Rclone (Recomendado)
-1. Agrega `rclone` al Dockerfile
-2. Monta servicios como Google Drive, Dropbox, etc.
-3. Sincroniza archivos al volumen `/data`
+✅ **Almacenamiento ilimitado** (según tu plan de Google)  
+✅ **Persistencia total** de tus películas  
+✅ **Fácil gestión** desde Google Drive web/desktop  
+✅ **Sin costos adicionales** en Railway  
 
-### Opción 3: Subir Manualmente (Solo para pruebas)
-- Usa `railway run` CLI para acceder al contenedor
-- Copia archivos con `scp` o similar
+**📖 Guía completa**: Ver [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md)
+
+**Pasos rápidos:**
+
+1. Configura Rclone localmente con Google Drive
+2. Obtén la configuración en base64
+3. Agrega variables de entorno en Railway:
+   - `ENABLE_RCLONE=true`
+   - `RCLONE_CONFIG=<tu-config-base64>`
+4. Sube películas a Google Drive
+5. Agrega bibliotecas en Plex apuntando a `/mnt/gdrive`
+
+### Otras Opciones
+
+#### Volumen Railway Nativo
+
+- Usa el volumen `/data` montado automáticamente
+- **Limitación**: Tamaño limitado y costoso para grandes bibliotecas
+- **Recomendado solo para**: Bibliotecas pequeñas (< 50GB)
+
+#### Cloudflare R2 / AWS S3
+
+- Almacenamiento en la nube económico
+- Requiere configuración adicional de Rclone
+- Ver [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md) para instrucciones
+
 
 ---
 
