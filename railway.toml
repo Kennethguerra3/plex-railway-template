@@ -17,15 +17,8 @@ port = 32400
 name = "file-manager"
 port = 9090
 
-# Volúmenes persistentes críticos
-[[deploy.volumes]]
-mountPath = "/config"
-name = "plex-config"
-
+# Volúmenes persistentes
+# NOTA: Usamos "Single Volume Strategy". La config se guardará en /data/.plex-config
 [[deploy.volumes]]
 mountPath = "/data"
 name = "plex-data"
-
-[[deploy.volumes]]
-mountPath = "/transcode"
-name = "plex-transcode"
