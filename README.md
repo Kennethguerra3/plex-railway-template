@@ -52,20 +52,43 @@ Para subir tus películas, necesitas habilitar el acceso al puerto **9090** (o e
 >
 > 1. `FB_ADMIN_PASSWORD_FILE` (Docker Secret - Más seguro)
 > 2. `FB_ADMIN_PASSWORD` (Variable de entorno)
-> 3. **Fallback**: Si no defines nada, el usuario será `admin` y la contraseña `admin`.
->    *(⚠️ Se mostrará una alerta de seguridad en los logs si usas credenciales por defecto)*.
+> 3. **Fallback**: Si no defines nada,## 🚀 Despliegue en Railway (Guía Rápida)
 
----
+Este template está optimizado para Railway. Sigue estos pasos para desplegar tu servidor Plex + File Browser.
 
-## ⚙️ Variables de Entorno
+### 1. Variables de Entorno (Obligatorias)
 
-| Variable | Descripción | Requerido | Valor por Defecto |
-|----------|-------------|-----------|-------------------|
-| `PLEX_CLAIM` | Tu token de [plex.tv/claim](https://plex.tv/claim) | ✅ Sí | - |
-| `TZ` | Zona horaria (ej: `America/Mexico_City`) | No | `UTC` |
-| `FB_ADMIN_USER` | Usuario admin de FileBrowser | ⚠️ Recomendado | `admin` |
-| `FB_ADMIN_PASSWORD` | Contraseña admin de FileBrowser | ⚠️ Recomendado | `admin` (Min 6 caracteres) |
-| `FB_PORT` | Puerto de escucha de FileBrowser | ⚠️ Recomendado | `9090` |
+Configura estas variables en tu proyecto de Railway:
+
+| Variable | Valor Recomendado | Descripción |
+| :--- | :--- | :--- |
+| `PORT` | `32400` | Puerto público. **Pon 32400 para ver Plex**, o 9090 para File Browser. |
+| `FB_PORT` | `9090` | Puerto interno del File Browser (No cambiar). |
+| `FB_ADMIN_USER` | `tu_usuario` | Usuario para iniciar sesión en el gestor de archivos. |
+| `FB_ADMIN_PASSWORD` | `tu_clave_secreta` | **Mínimo 6 caracteres**. Clave del gestor de archivos. |
+| `PLEX_CLAIM` | `claim-xxxx` | Token de [plex.tv/claim](https://www.plex.tv/claim) para asociar tu servidor. |
+
+![Variables en Railway](doc/images/railway-vars.png)
+
+### 2. Networking (Puertos)
+
+Railway solo expone un puerto público a la vez (el definido en `PORT`).
+- **Para ver películas (Plex):** Configura `PORT=32400`.
+- **Para subir archivos (File Browser):** Configura `PORT=9090`.
+
+### 3. Almacenamiento y Bibliotecas (`/data`)
+
+El sistema usa un **Volumen Único** montado en `/data`.
+- Toda tu configuración de Plex vive oculta en `/data/.plex-config` (¡No la borres!).
+- Tus archivos multimedia deben ir dentro de subcarpetas en `/data`.
+
+**Cómo agregar bibliotecas en Plex:**
+Cuando Plex te pida la carpeta de tus películas, debes escribir la ruta completa:
+`/data/NombreDeTuCarpeta`
+
+*Ejemplo:* Si en File Browser creaste una carpeta llamada `Movies`, en Plex la ruta es `/data/Movies`.
+
+![Ejemplo de Ruta](doc/images/filebrowser-demo.png)
 
 ---
 
@@ -84,4 +107,4 @@ Asegúrate de que has subido los archivos a `/data` y que en la configuración d
 ## 📄 Licencia
 
 Basado en el contenedor oficial [plexinc/pms-docker](https://github.com/plexinc/pms-docker).
-Optimizado por **Antigravity** con estándares de seguridad Enterprise.
+Optimizado por **WarsTrom** con estándares de seguridad Enterprise.
