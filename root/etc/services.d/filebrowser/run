@@ -156,8 +156,9 @@ initialize_database() {
         log_info "Usuario $ADMIN_USER actualizado correctamente."
     else
         # Si falla (ej: usuario no existe), intentamos crear
-        if echo "$update_out" | grep -q "no rows"; then
-             log_info "El usuario no existe. Creando nuevo..."
+        # Regex extendida para capturar "no rows" (sqlite) O "does not exist" (app logic)
+        if echo "$update_out" | grep -qE "no rows|does not exist"; then
+             log_info "El usuario no existe (update falló). Intentando crear nuevo..."
              if add_out=$("$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
                  log_info "Usuario $ADMIN_USER creado exitosamente."
              else
@@ -165,9 +166,11 @@ initialize_database() {
              fi
         else
              # Hubo otro error en el update, intentamos 'add' por si acaso (fallback brutal)
-             log_warn "Fallo update ($update_out). Intentando creación forzada..."
-             if ! "$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" >/dev/null 2>&1; then
-                  log_error "No se pudo asegurar el usuario administrador. Revisa logs."
+             log_warn "Fallo update desconocido ($update_out). Intentando creación forzada..."
+             if add_fallback_out=$("$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
+                  log_info "Usuario asegurado mediante fallback."
+             else
+                  log_error "NO SE PUDO crear el usuario administrador. Error: $add_fallback_out"
              fi
         fi
     fi
