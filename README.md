@@ -62,7 +62,7 @@ Configura estas variables en tu proyecto de Railway:
 
 | Variable | Valor Recomendado | Descripción |
 | :--- | :--- | :--- |
-| `PORT` | `32400` | Puerto público. **Pon 32400 para ver Plex**, o 9090 para File Browser. |
+| `PORT` | `32400` | Puerto público. **Pon 32400 para ver Plex**. |
 | `FB_PORT` | `9090` | Puerto interno del File Browser (No cambiar). |
 | `FB_ADMIN_USER` | `tu_usuario` | Usuario para iniciar sesión en el gestor de archivos. |
 | `FB_ADMIN_PASSWORD` | `tu_clave_secreta` | **Mínimo 6 caracteres**. Clave del gestor de archivos. |
