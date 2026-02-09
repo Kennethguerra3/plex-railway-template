@@ -68,7 +68,6 @@ Configura estas variables en tu proyecto de Railway:
 | `FB_ADMIN_PASSWORD` | `tu_clave_secreta` | **Mínimo 6 caracteres**. Clave del gestor de archivos. |
 | `PLEX_CLAIM` | `claim-xxxx` | Token de [plex.tv/claim](https://www.plex.tv/claim) para asociar tu servidor. |
 
-![Variables en Railway](doc/images/railway-vars.png)
 
 ### 2. Networking (Puertos)
 
@@ -87,7 +86,7 @@ Cuando Plex te pida la carpeta de tus películas, debes escribir la ruta complet
 `/data/NombreDeTuCarpeta`
 
 *Ejemplo:* Si en File Browser creaste una carpeta llamada `Movies`, en Plex la ruta es `/data/Movies`.
-
+![Variables en Railway](doc/images/railway-vars.png)
 ![Ejemplo de Ruta](doc/images/filebrowser-demo.png)
 
 ---
