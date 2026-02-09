@@ -64,8 +64,8 @@ Para subir tus películas, necesitas habilitar el acceso al puerto **9090** (o e
 | `PLEX_CLAIM` | Tu token de [plex.tv/claim](https://plex.tv/claim) | ✅ Sí | - |
 | `TZ` | Zona horaria (ej: `America/Mexico_City`) | No | `UTC` |
 | `FB_ADMIN_USER` | Usuario admin de FileBrowser | ⚠️ Recomendado | `admin` |
-| `FB_ADMIN_PASSWORD` | Contraseña admin de FileBrowser | ⚠️ Recomendado | `admin` |
-| `FB_PORT` | Puerto de escucha de FileBrowser | ⚠️ Recomendado  | `9090` |
+| `FB_ADMIN_PASSWORD` | Contraseña admin de FileBrowser | ⚠️ Recomendado | `admin` (Min 6 caracteres) |
+| `FB_PORT` | Puerto de escucha de FileBrowser | ⚠️ Recomendado | `9090` |
 
 ---
 
