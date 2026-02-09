@@ -146,38 +146,6 @@ initialize_database() {
     else
         log_info "Base de datos existente detectada."
     fi
-
-    # [FIX] Always ensure Admin User exists and has correct password (Idempotency)
-    log_info "Asegurando usuario administrador ($ADMIN_USER)..."
-    
-    # Intenta actualizar contraseña primero (si el usuario ya existe)
-    # Capturamos output para debug
-    if update_out=$("$FB_BINARY" users update "$ADMIN_USER" --password "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
-        log_info "Usuario $ADMIN_USER actualizado correctamente."
-    else
-        # Si falla (ej: usuario no existe), intentamos crear
-        # Regex extendida para capturar "no rows" (sqlite) O "does not exist" (app logic)
-        if echo "$update_out" | grep -qE "no rows|does not exist"; then
-             log_info "El usuario no existe (update falló). Intentando crear nuevo..."
-             if add_out=$("$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
-                 log_info "Usuario $ADMIN_USER creado exitosamente."
-             else
-                 log_error "Fallo al crear usuario: $add_out"
-             fi
-        else
-             # Hubo otro error en el update, intentamos 'add' por si acaso (fallback brutal)
-             log_warn "Fallo update desconocido ($update_out). Intentando creación forzada..."
-             if add_fallback_out=$("$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
-                  log_info "Usuario asegurado mediante fallback."
-             else
-                  log_error "NO SE PUDO crear el usuario administrador. Error: $add_fallback_out"
-             fi
-        fi
-    fi
-
-    if [ "$ADMIN_PASS" == "admin" ]; then
-         log_warn "SECURITY ALERT: Credenciales por defecto en uso (admin/admin)."
-    fi
 }
 
 configure_application() {
@@ -195,13 +163,47 @@ configure_application() {
         > /dev/null 2>&1
 
     # [REGRESSION FIX] Robust Version Compatibility Check
-    if ! err_msg=$("$FB_BINARY" config set --database "$DB_PATH" --auth.min-password-length 10 2>&1); then
-         if ! "$FB_BINARY" config set --database "$DB_PATH" --minimumPasswordLength 10 > /dev/null 2>&1; then
+    # Setting min length to 6 to support shorter passwords (like @Guerra33 which is 9 chars)
+    # Default seemed to be 12 causing creation failure.
+    if ! err_msg=$("$FB_BINARY" config set --database "$DB_PATH" --auth.min-password-length 6 2>&1); then
+         if ! "$FB_BINARY" config set --database "$DB_PATH" --minimumPasswordLength 6 > /dev/null 2>&1; then
              log_warn "No se pudo establecer política de contraseñas. Error: $err_msg"
          fi
     fi
     
     chown "$USER:$GROUP" "$DB_PATH"
+}
+
+ensure_user() {
+    # [FIX] Always ensure Admin User exists and has correct password (Idempotency)
+    # This must run AFTER configure_application to ensure password policy (length) is set correctly.
+    log_info "Asegurando usuario administrador ($ADMIN_USER)..."
+    
+    # Intenta actualizar contraseña primero (si el usuario ya existe)
+    if update_out=$("$FB_BINARY" users update "$ADMIN_USER" --password "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
+        log_info "Usuario $ADMIN_USER actualizado correctamente."
+    else
+        # Regex extendida para capturar "no rows" (sqlite) O "does not exist" (app logic)
+        if echo "$update_out" | grep -qE "no rows|does not exist"; then
+             log_info "El usuario no existe (update falló). Intentando crear nuevo..."
+             if add_out=$("$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
+                 log_info "Usuario $ADMIN_USER creado exitosamente."
+             else
+                 log_error "Fallo al crear usuario: $add_out"
+             fi
+        else
+             log_warn "Fallo update desconocido ($update_out). Intentando creación forzada..."
+             if add_fallback_out=$("$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
+                  log_info "Usuario asegurado mediante fallback."
+             else
+                  log_error "NO SE PUDO crear el usuario administrador. Error: $add_fallback_out"
+             fi
+        fi
+    fi
+
+    if [ "$ADMIN_PASS" == "admin" ]; then
+         log_warn "SECURITY ALERT: Credenciales por defecto en uso (admin/admin)."
+    fi
 }
 
 # --- Main Execution Flow ---
@@ -221,8 +223,13 @@ fi
 
 ensure_permissions
 ensure_branding
+
+# 1. Initialize DB file (if missing)
 initialize_database
+# 2. Configure (Apply Policies like password length)
 configure_application
+# 3. Create/Update User (Now that policy is set)
+ensure_user
 
 log_info "Ejecutando proceso principal en puerto $PORT..."
 
