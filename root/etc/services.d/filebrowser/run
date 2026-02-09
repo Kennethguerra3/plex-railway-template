@@ -137,47 +137,43 @@ initialize_database() {
     trap "rm -f '$INIT_LOCK'" RETURN
 
     if [ ! -f "$DB_PATH" ]; then
-        log_info "Inicializando base de datos segura..."
-        
+        log_info "Inicializando base de datos nueva..."
+        # Init DB only
         if ! "$FB_BINARY" config init --database "$DB_PATH" > /dev/null 2>&1; then
             log_error "Fallo al inicializar DB."
-            # Lock will be removed by trap
             exit 1
-        fi
-        
-        INIT_JSON="/tmp/sb_init_user.json"
-        
-        cat > "$INIT_JSON" <<EOF
-{
-  "username": "$ADMIN_USER",
-  "password": "$ADMIN_PASS",
-  "perm": {
-    "admin": true
-  }
-}
-EOF
-        chmod 600 "$INIT_JSON"
-        
-        log_info "Importando usuario administrador desde definición segura..."
-        
-        if "$FB_BINARY" users import "$INIT_JSON" --database "$DB_PATH" > /dev/null 2>&1; then
-             log_info "Usuario administrador creado/actualizado correctamente."
-        else
-             log_error "Fallo al importar usuario. Intentando método fallback (CLI)..."
-             "$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --database "$DB_PATH" > /dev/null 2>&1
-        fi
-        
-        if command -v shred >/dev/null 2>&1; then
-            shred -u "$INIT_JSON"
-        else
-            rm -f "$INIT_JSON"
-        fi
-        
-        if [ "$ADMIN_PASS" == "admin" ]; then
-             log_warn "SECURITY ALERT: Credenciales por defecto en uso (admin/admin)."
         fi
     else
         log_info "Base de datos existente detectada."
+    fi
+
+    # [FIX] Always ensure Admin User exists and has correct password (Idempotency)
+    log_info "Asegurando usuario administrador ($ADMIN_USER)..."
+    
+    # Intenta actualizar contraseña primero (si el usuario ya existe)
+    # Capturamos output para debug
+    if update_out=$("$FB_BINARY" users update "$ADMIN_USER" --password "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
+        log_info "Usuario $ADMIN_USER actualizado correctamente."
+    else
+        # Si falla (ej: usuario no existe), intentamos crear
+        if echo "$update_out" | grep -q "no rows"; then
+             log_info "El usuario no existe. Creando nuevo..."
+             if add_out=$("$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" 2>&1); then
+                 log_info "Usuario $ADMIN_USER creado exitosamente."
+             else
+                 log_error "Fallo al crear usuario: $add_out"
+             fi
+        else
+             # Hubo otro error en el update, intentamos 'add' por si acaso (fallback brutal)
+             log_warn "Fallo update ($update_out). Intentando creación forzada..."
+             if ! "$FB_BINARY" users add "$ADMIN_USER" "$ADMIN_PASS" --perm.admin --database "$DB_PATH" >/dev/null 2>&1; then
+                  log_error "No se pudo asegurar el usuario administrador. Revisa logs."
+             fi
+        fi
+    fi
+
+    if [ "$ADMIN_PASS" == "admin" ]; then
+         log_warn "SECURITY ALERT: Credenciales por defecto en uso (admin/admin)."
     fi
 }
 

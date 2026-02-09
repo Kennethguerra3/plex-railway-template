@@ -11,7 +11,7 @@ Servidor Plex completo en Railway con **Gestor de Archivos Web** integrado. Desp
 - 🎬 **Plex Media Server**: Streaming de películas, series y música.
 - 📂 **File Browser Hardened**:
   - **Seguridad**: Credenciales vía Variables de Entorno o Secretos.
-  - **UX**: Tema Oscuro nativo "Plex Integration" (adiós al flashbang blanco).
+  - **UX**: Tema Oscuro nativo "Plex Integration".
   - **Robustez**: Protección contra corrupción de base de datos en reinicios rápidos.
 - 💾 **Persistencia Total**: Volúmenes Railway para `/config`, `/data` y `/transcode`.
 - 🚀 **Zero Config Proxy**: Acceso seguro mediante TCP Proxy de Railway.
